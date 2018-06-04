@@ -1,6 +1,6 @@
 ---
 title: "Impressum"
-date: 2017-09-16T15:28:36+02:00
+date: "2018-06-4T06:28:26-07:00"
 aliases:
     - /license
 ---

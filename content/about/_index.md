@@ -1,9 +1,9 @@
-+++
-date = "2015-08-22T06:28:26-07:00"
-draft = false
-title = "About"
-heading = "About"
-+++
+---
+date: "2018-06-4T06:28:26-07:00"
+draft: false
+title: "About"
+heading: "About"
+---
 
 Hi, i am Adrian.
 This is my personal website.

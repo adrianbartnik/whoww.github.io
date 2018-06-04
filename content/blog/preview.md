@@ -1,26 +1,10 @@
 ---
 title: "Jane Theme Preview"
-date: 2018-03-06T16:01:23+08:00
-lastmod: 2018-03-07T16:01:23+08:00
+date: "2018-06-04"
 draft: false
 tags: ["preview", "shortcodes", "tag-6"]
 categories: ["docs", "shortcodes", "index"]
-author: "Typora"
-
-# You can also close(false) or open(true) something for this content.
-# P.S. comment can only be closed
-# comment: false
-# toc: false
-
-# You can also define another contentCopyright. e.g. contentCopyright: "This is another copyright."
-contentCopyright: '<a href="https://github.com/gohugoio/hugoBasicExample" rel="noopener" target="_blank">See origin</a>'
-# reward: false
-mathjax: true
-
-menu:
-  main:
-    parent: "docs"
-    weight: 1
+slug: 'use-at-instead-of-head'
 ---
 
 **Markdown** is created by [Daring Fireball](http://daringfireball.net/), the original guideline is [here](http://daringfireball.net/projects/markdown/syntax). Its syntax, however, varies between different parsers or editors.
@@ -348,4 +332,4 @@ To use this feature, first, please enable it in `Preference` Panel -> `Markdown`
 
 To trigger inline preview for inline math: input “$”, then press `ESC` key, then input TeX command, a preview tooltip will be visible like below:
 
-<img src="http://typora.io/img/inline-math.gif" style="zoom:50%;" />
+<img src="/img/background.jpg" style="zoom:50%;" />
