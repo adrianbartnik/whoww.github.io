@@ -9,7 +9,7 @@ theme               = "cocoa"
 author              = "Adrian Bartnik"
 title               = "Adrian Bartnik"
 pygmentsuseclasses  = true
-# disqusshortname     = "cocoaexamplesite" # Comment out to disable Disqus.
+disqusshortname     = "whoww" # Comment out to disable Disqus.
 pluralizelisttitles = false
 # googleAnalytics     = "UA-123-45"
 
@@ -76,5 +76,5 @@ avatar                 = "img/profile.jpg" # path to image in static dir e.g img
 # gravatar             = ""                # gravatar hash. see https://en.gravatar.com/site/implement/hash/. do not use in the same time as avatar
 
 # The following are DEPRECATED.
-gatracker              = "XYZ" # use googleAnalytics instead
-initials               = "ad"  # displayed on single post page; deprecated in v0.3.0.
+# gatracker              = "XYZ" # use googleAnalytics instead
+# initials               = "ad"  # displayed on single post page; deprecated in v0.3.0.
