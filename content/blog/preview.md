@@ -1,7 +1,7 @@
 ---
 title: "Jane Theme Preview"
 date: "2018-06-04"
-draft: false
+draft: true
 tags: ["preview", "shortcodes", "tag-6"]
 categories: ["docs", "shortcodes", "index"]
 slug: 'use-at-instead-of-head'
