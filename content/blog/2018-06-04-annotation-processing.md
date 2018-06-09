@@ -6,10 +6,10 @@ tags: ["java", "annotation-processing"]
 slug: "annotation-processing"
 ---
 
-Have you ever wondered what the `@Override`-annotation on all your methods really means and it is used under the hood?
+Have you ever wondered what the `@Override`-annotation on all your methods really means and how it is used under the hood?
 Or do you have nice use-case that would benefit from automatic code generation?
-Or maybe you simply want to learn more about the java annotations and the java compilation process, then this post is for you.
-We are going to talk about *Anotation Processing* in Java, what it is all about, how it integrates with the Java compiler and how you can write your own annotation processor.
+Or maybe you simply want to learn more about the annotations and the java compilation process, then this post is for you.
+We are going to talk about *Annotation Processing* in Java, what it is all about, how it integrates with the Java compiler and how you can write your own annotation processor.
 
 **TLDR**: This post implements a custom annotation processor that generates convenience functions for missing features.
 You can find the code on [Github](https://github.com/whoww/annotation-processor).
@@ -20,18 +20,18 @@ You can find the code on [Github](https://github.com/whoww/annotation-processor)
 Annotations simply act as *markers* and provide additional information to the Java compiler **during compilation**, but have not effect on the application at runtime.
 They stand in contrast to Reflection, which is all about retrieving, examining & manipulating properties of objects at runtime but comes with certain drawbacks.
 Most importantly, reflection imposes impose a performance penalty when accessing the object properties.
-Additionally, it may introduce security issues and expose the inner workings of the class.
+Additionally, it may introduce security issues and expose the inner workings of a class.
 You can read more about that in the [Java documentation](https://docs.oracle.com/javase/tutorial/reflect/index.html).
 
 ## Annotation Overview
 
-Annotation have been introduced with Java 6, which was released in December 2006, and provides an easy mechanism for adding further information for your Java classes and types.
-Java 6 came with 3 standard annotations, such as `@Override` in order to check if annotated method actually implements a parent method or from an implemented interface.
-`@Deprecated` causes a compile warning if the method is used, that has been marked as deprecated by the developer and
-`@SuppressWarnings` may be used to suppress this or other warnings.
+Annotation have been introduced with Java 6, which was released in December 2006, and provide an easy mechanism for adding further information for your Java source code.
+Java 6 came with 3 standard annotations, such as `@Override` in order to check if annotated method actually overrides a parent method or implements a method from an implemented interface.
+`@Deprecated` results in a compiler warning if a method is used that has been marked as deprecated by the developer.
+`@SuppressWarnings` may be used to suppress these or other compiler warnings.
 Java 8 introduced some new annotations such as the [`FunctionalInterface`](https://docs.oracle.com/javase/8/docs/api/java/lang/FunctionalInterface.html), which is used to marked functions, which can be used in Lambda expressions.
 Additionally, before Java 8, only declarations of classes, fields, methods, and other program elements such as parameters could be annotated.
-With the release of Java 8, annotations can also be applied to the use of types, such as:
+With the release of Java 8, annotations can also be applied to the use of types, such as in:
 
 ```java
 // Class instance creation expression
@@ -52,9 +52,10 @@ void monitorTemperature() throws @Critical TemperatureException {...}
 As already mentioned, annotations are processed during the compilation and not during runtime, as shown in the figure below ([Source](http://openjdk.java.net/groups/compiler/doc/compilation-overview/index.html)).
 All Java sources files are feed into the parser, which generates [Abstract Syntax Trees](https://en.wikipedia.org/wiki/Abstract_syntax_tree) and fills the compiler's symbol table.
 Then, for each annotation, the corresponding Annotation Processor is called, which may generate new source files.
-All new geenrated source files are then feed back to to parser as they need to be parsed and may include further annotations.
+All newly generated source files are then feed back to the parser as they also need to be parsed and may include further annotations.
 Finally, when no new source files have been generated, the syntax trees are translated into class files.
-This last step includes resolving references to external libraries, which classes also need to be compiled, although they will not be subject to annotation processing.
+This last step includes resolving references to external libraries, whose classes also need to be compiled.
+However, they will not be subject to annotation processing.
 
 {{< figure src="/img/blog/annotation-processor/CompilationProcess.svg" title="Java Compilation Process with Annotation Processing" >}}
 
@@ -65,8 +66,8 @@ We will see an example in the upcoming sections.
 
 ## Custom Annotation Processor
 
-The general structure for writing a annotation processor is as follows.
-First, have one dedicated project or module, which only contains the annotation itself.
+The general structure for writing an annotation processor is as follows:
+First, have one dedicated project or module, which only contains the annotations themselves.
 Both the annotation processor and the client depend on this project.
 However, the client does not need a compile-time dependency on the annotation processor, but only need to run it before the real code.
 By doing this, we prevent copying all the annotation processor code into the final jar-file.
@@ -87,8 +88,8 @@ Anyway, it's simply for learning purposes, so let's start.
 In our case, the annotation project contains two annotations: `@MissingFeature` and `@MissingFeatures`.
 `@Target(ElementType.TYPE)` means that only interfaces and classes can be annotated and `@Retention(RetentionPolicy.CLASS)` that the annotations will not be available at runtime, e.g. for reflection.
 One special case is the `@Repeatable(MissingFeatures.class)`, which is needed in order to be able to annotate the same annotation to the same class multiple times.
-This features has been introduce in Java 8 and requires that we also add the additional interface `@MissingFeatures`.
-This interface groups all single `MissingFeature` in an array and makes it available to the annotation processor.
+This feature has been introduce in Java 8 and requires that we also add the additional interface `@MissingFeatures`.
+This interface groups multiple `MissingFeature` for a single class in an array and makes it available to the annotation processor.
 
 ```java
 @Repeatable(MissingFeatures.class)
@@ -124,7 +125,7 @@ public @interface MissingFeatures {
 Generally, all annotation processor must be registered before they can be run.
 This happens by creating a file named `javax.annotation.processing.Processor` in the `META-INF/services` directory.
 Each line in the file may specify an annotation processor that is automatically detected and run by `Javac`.
-However, you we also simply use Google's [`AutoService`](https://github.com/google/auto/tree/master/service), which automatically generates this file for you (it is also an annotation processor).
+However, you we also simply use Google's [`AutoService`](https://github.com/google/auto/tree/master/service), which automatically generates this file for us (it is also an annotation processor).
 We only have to annotate each annotation processor in our project with `@AutoService(Processor.class)`.
 You can find the dependencies as an extract from the `build.gradle` file below.
 
@@ -138,15 +139,15 @@ dependencies {
 
 Each annotation processor either has to implement the `Processor` interface or inherit from `AbstractProcessor`.
 The initialization of the annotation processor happens in the `init`-method, where we can get references to important classes.
-Most most important ones are:
+The most important ones are:
 
 * `Messager` for logging errors
 * `Filer` for writing new classes
 * `Elements` to work with `Element` classes (more information later)
 * `Types` to work with `TypeMirror` (more information later)
 
-One of the first steps when writing your own annotation processor should be overriding `getSupportedAnnotationTypes` which signal in which annotation you processor is interested.
-In our case, this is `@MissingFeature` and `@MissingFeatures`.
+One of the first steps when writing your own annotation processor should be overriding `getSupportedAnnotationTypes` which signal in which annotation you processor is interested in.
+In our case, these are `@MissingFeature` and `@MissingFeatures`.
 
 ```java
 @AutoService(Processor.class)
@@ -185,7 +186,7 @@ It is important to note that every `error` log done via the `Messager` object wi
 
 As we have seen previously, the Java compiler will scan through our source code and look for annotations.
 We have seen that there are various valid locations where we can use annotations.
-Our processor will then receive those elements in the `proceess`-method corresponding to the annotations he registered for.
+Our processor will then receive those elements in the `process`-method corresponding to the annotations he registered for.
 
 [Hannes Dorfman](http://hannesdorfmann.com/annotation-processing/annotationprocessing101) has this nice overview of different types of elements.
 
@@ -205,8 +206,11 @@ public class Foo {		// TypeElement
 }
 ```
 
+Each element represents some part of the source code and provides information such as the class name.
+However, for retrieving more information about the class itself, such as superclass or its implemented interface, you have to use a `TypeMirror`.
+The `TypeMirror` of each element is accessible by calling `element.asType()`.
 Since in our use-case we are not so much concerned with the different element types, I leave it like that and forward you to his post in case you want to learn more.
-We retrieve all classes that annotated with one of our annotation from the `RoundEnviroment` via `getElementsAnnotatedWith(MissingFeature.class)`.
+We retrieve all classes that annotated with one of our annotations from the `RoundEnviroment` via `getElementsAnnotatedWith(MissingFeature.class)`.
 
 ```java
 @AutoService(Processor.class)
@@ -233,7 +237,7 @@ public class MissingFeatureProcessor extends AbstractProcessor {
 }
 ```
 
-In there we check whether the element that has been annotated is actually a class.
+In this method, we check whether the element that has been annotated is actually a class.
 Otherwise we throw an exception and stop processing further elements.
 In case we have found a valid element, we create a convenience object `MissingFeatureAnnotatedClass` that holds all necessary information.
 The example below shows the code for a class that has only one `MissingFeature` annotation.
@@ -273,10 +277,10 @@ private void checkForClassType(Element annotatedElement)
 
 The only thing that is missing is the source code for the `MissingFeatureManagerGenerator`.
 Once all classes with `MissingFeature` annotations have been added, we are ready to generate its corresponding source file.
-The class simply maintains a list of `MissingFeatureHolder`, which in turn simply stores the fully qualified class name, the feature description and the severity.
-Once we have processed all annotations, our annotation processor writes a simple java class, which makes this list accessibly and adds convenience functionality.
+The class simply maintains a list of `MissingFeatureHolder`, which in turn simply store the fully qualified class name, the feature description and the severity.
+Once we have processed all annotations, our annotation processor writes a simple java class, which makes this list accessible and adds convenience functionality.
 We will see an example output in just a second.
-For generating the Java source file, we use [Javapoet](https://github.com/square/javapoet) library by Square.
+For generating the Java source file, we use the [Javapoet](https://github.com/square/javapoet) library by Square.
 
 ```java
 public class MissingFeatureManagerGenerator {
@@ -312,15 +316,15 @@ public class MissingFeatureManagerGenerator {
 ```
 
 As mentioned previously, all newly generated files, in this case our `MissingFeatureManager`, will also be subject to annotation processing.
-However, in the second pass, only all newly created files will be considered.
+However, in the next pass, only all newly created files will be considered.
 Although, we do not except to see any newly class files with a `MissingFeature` annotation, we have to guard against overwriting the file again since we currently use a static file name.
 This can be done by using a simple `boolean` toggle.
 
 ### Client
 
-Lastly, our client needs to depend on both projects and to see some output annotate some classes with out annotations.
-In order to enable annotation processing in java with Gradle, we use the [`gradle-apt-plugin`](https://github.com/tbroyer/gradle-apt-plugin).
-The example below is for using IntelliJ idea, to use it in eclipse, simple replace `id "net.ltgt.apt-idea" version "0.15"` by `id "net.ltgt.apt-eclipse" version "0.15"`.
+Lastly, our client needs to depend on both projects and to see some output annotate some classes with our annotations.
+In order to enable annotation processing in Java with Gradle, we use the [`gradle-apt-plugin`](https://github.com/tbroyer/gradle-apt-plugin).
+The example below is for using the IntelliJ IDE, to use it in Eclipse, simple replace `id "net.ltgt.apt-idea" version "0.15"` by `id "net.ltgt.apt-eclipse" version "0.15"`.
 
 ```java
 plugins {
@@ -335,7 +339,7 @@ dependencies {
 ```
 
 This is an example of our annotation in action.
-We can annotation each class with multiple `@MissingFeature` annotation and specify a severity as well as an description.
+We can annotation each class with multiple `@MissingFeature` annotation and specify a severity as well as a description.
 
 
 ```java
@@ -392,7 +396,7 @@ public final class MissingFeatureManager {
 
 # Java 9
 
-Java 9 further extends the annotation mechanism by introducing the [`@Generated`-Annotation](https://docs.oracle.com/javase/8/docs/api/javax/annotation/Generated.html), which marks generated source files and allows to add further information, such as the annotation processor, the author and date.
+Java 9 further extends the annotation mechanism by introducing the [`@Generated`-Annotation](https://docs.oracle.com/javase/8/docs/api/javax/annotation/Generated.html), which marks generated source files and allows to add further information, such as the annotation processor name, the author and date.
 Java 9 also adds further functionality to the [`RoundEnvironment`](https://docs.oracle.com/javase/9/docs/api/javax/annotation/processing/RoundEnvironment.html) for easier handling of multiple annotation: `getElementsAnnotatedWithAny​(Set<Class<? extends Annotation>> annotations)` and `getElementsAnnotatedWithAny​(TypeElement... annotations)`.
 
 # Outlook and Further Information
