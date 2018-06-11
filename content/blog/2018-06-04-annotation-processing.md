@@ -365,18 +365,13 @@ But it should be clear by now that we are also free to generate other kinds of d
 
 ```java
 public final class MissingFeatureManager {
-  private static final List<MissingFeatureHolder> missingFeatures =
-    new ArrayList<>();
+  private static final List<MissingFeatureHolder> missingFeatures = new ArrayList<>();
 
   static {
-    missingFeatures.add(
-      new MissingFeatureHolder("DummyClassTwo", "Missing Feature Two", HIGH));
-    missingFeatures.add(
-      new MissingFeatureHolder("DummyClassOne", "Implement Logic", HIGH));
-    missingFeatures.add(
-      new MissingFeatureHolder("DummyClassOne", "Write Blogpost", CRITICAL));
-    missingFeatures.add(
-      new MissingFeatureHolder("DummyClassOne", "Add Authorization", MEDIUM));
+    missingFeatures.add(new MissingFeatureHolder("DummyClassTwo", "Missing Feature Two", HIGH));
+    missingFeatures.add(new MissingFeatureHolder("DummyClassOne", "Implement Logic", HIGH));
+    missingFeatures.add(new MissingFeatureHolder("DummyClassOne", "Write Blogpost", CRITICAL));
+    missingFeatures.add(new MissingFeatureHolder("DummyClassOne", "Add Authorization", MEDIUM));
   }
 
   public List<MissingFeatureHolder> getAllMissingFeatures() {
@@ -408,11 +403,10 @@ But that is different topic for a separate blog post.
 
 For further information, please see the following posts:
 
-* Hannes Dorfman - http://hannesdorfmann.com/annotation-processing/annotationprocessing101
-* Jorge Hidalgo - https://www.slideshare.net/deors/javaone-2017-con3282-code-generation-with-annotation-processors-state-of-the-art-in-java-9
-* Mert Şimşek - https://medium.com/@iammert/annotation-processing-dont-repeat-yourself-generate-your-code-8425e60c6657
-* Java compilation process - http://openjdk.java.net/groups/compiler/doc/compilation-overview/index.html
-
+* [Hannes Dorfman](http://hannesdorfmann.com/annotation-processing/annotationprocessing101)
+* [Jorge Hidalgo](https://www.slideshare.net/deors/javaone-2017-con3282-code-generation-with-annotation-processors-state-of-the-art-in-java-9)
+* [Mert Şimşek](https://medium.com/@iammert/annotation-processing-dont-repeat-yourself-generate-your-code-8425e60c6657)
+* [Java compilation process](http://openjdk.java.net/groups/compiler/doc/compilation-overview/index.html)
 
 # Summary
 
