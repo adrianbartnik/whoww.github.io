@@ -1,5 +1,5 @@
 ---
-title: Inspecting Internet traffic with `mitmproxy`
+title: Inspecting Internet traffic with mitmproxy
 date: 2018-06-12
 draft: false
 tags: ["android", "mitm", "proxy"]
