@@ -4,7 +4,28 @@ body {
   min-height: 0%;
 }
 
+/* Make code blocks horizontally scrollable */
 pre {
+  border-radius: 4px;
   white-space: pre !important;
   overflow-x: auto;
+}
+
+figure > img {
+  display:block;
+  margin: 1.5em auto !important;
+}
+
+figcaption > h4 {
+  margin-top: 0.5em !important;
+  text-align: center;
+}
+
+/* Make code background darker */
+section.main .content .markdown code, section.main .content .markdown pre {
+    background-color: #d8d8d8;
+}
+
+section.main .content .markdown code {
+    padding: .15em .2em;
 }
